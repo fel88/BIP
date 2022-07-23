@@ -12,3 +12,7 @@
 #define MANUAL_SCROLL_STRING "ручные страницы"
 #define FONT_SIZE_STRING "размер текста"
 #define SD_CARD_NOT_FOUND_STRING "SD карта не найдена"
+#define RESUME_BOOK_YES "перейти к закладке"
+#define RESUME_BOOK_NO "начать с начала"
+#define RESUME_BOOK_TITLE "продолжить чтение"
+#define RESUME_BOOK_TITLE_2 "с закладки?"

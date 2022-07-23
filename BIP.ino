@@ -178,9 +178,55 @@ void bookBtnsUpd()
 
 
 int bookMenuSelected=0;
+int resumeBookMenuSelected=0;
 int currentGoto=0;
 bool rewindRequired=false;
 int gotoMenuItem=0;
+
+void resumeBookBtnsUpd()
+{
+	String button, button2, pressed_button;  
+    button = getButton();
+          if (button != prev_key_id)
+          {
+              delay(50);        // debounce
+              button2 = getButton();
+        
+              if (button == button2)
+              {
+                 prev_key_id = button;
+                 pressed_button = button;
+                 Serial.println(pressed_button);
+                  //Serial.println(key_read);
+          
+                        
+                         //if(key_id=="RIGHT")xx++;
+                         if(pressed_button=="DOWN"){
+                             resumeBookMenuSelected++;
+                                      resumeBookMenuSelected%=2;
+                             } 
+                          if(pressed_button=="UP"){
+                              resumeBookMenuSelected--;
+                                     if( resumeBookMenuSelected<0){
+                                      resumeBookMenuSelected=1;
+                                     }
+                            }
+                          if(pressed_button=="ENTER"){
+                          if(resumeBookMenuSelected==0){
+                            loadBookmark();
+                            fsmState=1;
+                            //load book
+                            
+                            menu_redraw_required=1;
+                          }else if(bookMenuSelected==1){
+                            fsmState=1;                           
+                                 
+                                 menu_redraw_required = 1;
+                          }
+                      }
+              }
+           }    
+}
 
 void bookBtnsUpd2()
 {
@@ -387,6 +433,35 @@ void drawBook()
 	u8g2.sendBuffer();        
 }
 
+void drawBookResumeMenu(void) 
+{  
+
+	uint8_t i, h;
+	u8g2_uint_t w, d;
+	resumeBookBtnsUpd();
+    
+    u8g2.clearBuffer();         
+    //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
+	u8g2.setFont(u8g2_font_unifont_t_symbols);
+    int yshift=26;
+	u8g2.drawGlyph(2,yshift+ resumeBookMenuSelected*8+16, 0x25b7);  
+	//u8g2.setFont(u8g2_font_5x7_mr); 
+	u8g2.setFont(u8g2_font_6x13_t_cyrillic); 
+	
+	u8g2.setFont(u8g2_font_5x8_t_cyrillic);  
+    h = u8g2.getFontAscent()-u8g2.getFontDescent();
+	w = u8g2.getWidth();
+	//u8g2.drawBox(0, i*h+1, w, h);    
+	
+	u8g2.drawUTF8(12, yshift+0+13, RESUME_BOOK_YES); 
+	u8g2.drawUTF8(12,yshift+ 8+13, RESUME_BOOK_NO);  
+      
+	8g2.drawUTF8(12,13, RESUME_BOOK_TITLE);  
+    u8g2.drawUTF8(12,20, RESUME_BOOK_TITLE_2);  
+    
+	u8g2.sendBuffer();         
+}
+
 void drawBookMenu(void) 
 {  
 	uint8_t i, h;
@@ -397,7 +472,7 @@ void drawBookMenu(void)
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 	u8g2.setFont(u8g2_font_unifont_t_symbols);
       
-	u8g2.drawGlyph(2, bookMenuSelected*8+16, 0x25b7);  /* dec 9731/hex 2603 Snowman */
+	u8g2.drawGlyph(2, bookMenuSelected*8+16, 0x25b7); 
 	//u8g2.setFont(u8g2_font_5x7_mr); 
 	u8g2.setFont(u8g2_font_6x13_t_cyrillic); 
 	//delay(1000);  
@@ -601,11 +676,10 @@ void setupBook()
 	   
 	char buffer[80];
 	  
-	sprintf(buffer, "%s%s",cdir,menu_strings[menu_current]);
-	//sprintf(buffer, "/dune2.txt");
+	sprintf(buffer, "%s%s",cdir,menu_strings[menu_current]);	
 		 
 	bookName=menu_strings[menu_current];
-	//fatFile = sd.open("/books/gold.txt");
+	
 	Serial.print("opening book: ");
 	Serial.println(buffer);
 	char buf2[16];
@@ -670,6 +744,9 @@ void setupBook()
 	Serial.println(line1);
 	line6="";line5="";line4="";line3="";line2="";
 	hasBookmark=getBookmark()>=0;
+ if(hasBookmark){
+  fsmState=11;
+ }
 }
 
 void initMenu()
@@ -847,7 +924,15 @@ void loop()
 		} else if(fsmState==21)
 		{
 			drawGoto();
-		}else if(fsmState==1)
+		}else if(fsmState==11)//yes/no resume book
+   {     
+    //if(menu_redraw_required!=0)
+     // {
+        drawBookResumeMenu();
+     // } 
+    
+    
+    }else if(fsmState==1)
 		{       
 			if(menu_redraw_required!=0)
 			{

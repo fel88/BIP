@@ -12,3 +12,7 @@
 #define MANUAL_SCROLL_STRING "manual pages"
 #define FONT_SIZE_STRING "font size"
 #define SD_CARD_NOT_FOUND_STRING "SD card not found"
+#define RESUME_BOOK_YES "from bookmark"
+#define RESUME_BOOK_NO "from start"
+#define RESUME_BOOK_TITLE "resume reading?"
+#define RESUME_BOOK_TITLE_2 ""
