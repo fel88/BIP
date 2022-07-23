@@ -397,16 +397,22 @@ void drawBook()
      }
 	 else
 	 {
-		int cw2=(line2.length()*fw/4);
+		/*int cw2=(line2.length()*fw/4);
 		int cw3=(line3.length()*fw/4);
 		int cw4=(line4.length()*fw/4);
 		int cw5=(line5.length()*fw/4);
-		int cw6=(line6.length()*fw/4);
+		int cw6=(line6.length()*fw/4);*/
 		u8g2.setDrawColor(1);
 
      
 		int yShift2=13-yShift;
 		int height=12;
+    int cw6=u8g2.getUTF8Width(line6.c_str())/2;
+  int  cw5=u8g2.getUTF8Width(line5.c_str())/2;
+   int   cw4=u8g2.getUTF8Width(line4.c_str())/2;
+   int   cw3=u8g2.getUTF8Width(line3.c_str())/2;
+   int   cw2=u8g2.getUTF8Width(line2.c_str())/2;
+      cw=u8g2.getUTF8Width(line1.c_str())/2;
 		u8g2.drawUTF8(  64-cw6,25+yShift2-height*2, line6.c_str());
 		u8g2.drawUTF8(  64-cw5,25+yShift2-height, line5.c_str());
 		u8g2.drawUTF8(  64-cw4,25+yShift2, line4.c_str());
@@ -456,7 +462,7 @@ void drawBookResumeMenu(void)
 	u8g2.drawUTF8(12, yshift+0+13, RESUME_BOOK_YES); 
 	u8g2.drawUTF8(12,yshift+ 8+13, RESUME_BOOK_NO);  
       
-	8g2.drawUTF8(12,13, RESUME_BOOK_TITLE);  
+	u8g2.drawUTF8(12,13, RESUME_BOOK_TITLE);  
     u8g2.drawUTF8(12,20, RESUME_BOOK_TITLE_2);  
     
 	u8g2.sendBuffer();         
@@ -996,11 +1002,16 @@ void loop()
                     if(cntr>100)break;
                  
 					char t=buf[0];       
-                    if(t==' '){                      
+                    if(t==' ' || t=='\t' || t=='\n' || t=='\r'  ){                      
 						break;
                      }
-                    if(t=='.' || t==',' || t=='\n'){line1+=t; break;}
+                     
+                    if(t=='.' || t==',' || (t=='-' && line1.length()>8)){line1+=t; break;}
                     line1+=t;              
+                }
+                if(n==-1){
+                  pauseBook=true;
+                  return;
                 }
                 bool whiteSpacesOnly = std::all_of(line1.begin(),line1.end(),isspace);
                 if(!whiteSpacesOnly)
@@ -1017,5 +1028,8 @@ void loop()
 					}
 				}             
 		}
+   //Serial.println("line1: ");
+   //Serial.println(line1); 
+   //Serial.println(line1.length());
 	} 
   }}}}
