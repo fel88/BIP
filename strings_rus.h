@@ -16,3 +16,6 @@
 #define RESUME_BOOK_NO "начать с начала"
 #define RESUME_BOOK_TITLE "продолжить чтение"
 #define RESUME_BOOK_TITLE_2 "с закладки?"
+#define CONTRAST_STRING "контраст"
+#define CONTRAST_LOW_STRING "низкий"
+#define CONTRAST_HIGH_STRING "высокий"

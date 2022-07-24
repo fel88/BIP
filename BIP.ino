@@ -137,7 +137,7 @@ void bookBtnsUpd()
                  
                  Serial.println(pressed_button);
                   //Serial.println(key_read);
-          
+           menu_redraw_required = 1;
                          if(pressed_button=="LEFT"){
                           
                                     fsmState=2;//menu
@@ -199,7 +199,8 @@ void resumeBookBtnsUpd()
                  Serial.println(pressed_button);
                   //Serial.println(key_read);
           
-                        
+                            
+                            menu_redraw_required=1;
                          //if(key_id=="RIGHT")xx++;
                          if(pressed_button=="DOWN"){
                              resumeBookMenuSelected++;
@@ -218,7 +219,8 @@ void resumeBookBtnsUpd()
                             //load book
                             
                             menu_redraw_required=1;
-                          }else if(bookMenuSelected==1){
+                          }else if(resumeBookMenuSelected==1){
+                            //Serial.println("fsmState 1. goto to start book");
                             fsmState=1;                           
                                  
                                  menu_redraw_required = 1;
@@ -227,7 +229,7 @@ void resumeBookBtnsUpd()
               }
            }    
 }
-
+int contrast=255;
 void bookBtnsUpd2()
 {
 	String button, button2, pressed_button;  
@@ -244,16 +246,17 @@ void bookBtnsUpd2()
                  Serial.println(pressed_button);
                   //Serial.println(key_read);
           
-                        
+                        menu_redraw_required=1;
                          //if(key_id=="RIGHT")xx++;
                          if(pressed_button=="DOWN"){
                              bookMenuSelected++;
-                                      bookMenuSelected%=7;
+                                      bookMenuSelected%=8;
+                                          
                              } 
                           if(pressed_button=="UP"){
                               bookMenuSelected--;
                                      if( bookMenuSelected<0){
-                                      bookMenuSelected=6;
+                                      bookMenuSelected=7;
                                      }
                             }
                           if(pressed_button=="ENTER"){
@@ -282,6 +285,14 @@ void bookBtnsUpd2()
                             
                                         textSize++;
                                         textSize%=3;
+                          }else if(bookMenuSelected==7){//contrast
+                            if(contrast==0){
+                                        contrast=255;}else
+                                        contrast=0;
+                                        
+                                         u8g2 . setContrast ( contrast) ;
+                                         Serial.print("set contrast: ");
+                                         Serial.print(contrast);
                           }
                       }
               }
@@ -365,7 +376,6 @@ void drawBook()
 {
 	u8g2.clearBuffer();       
   
-	bookBtnsUpd();
 	char buffer[80];
 	int perc=(int)((wordReaded/(float)totalWords)*100);
 	sprintf(buffer, "%6d/%ld (%d%c) %c%c%d", wordReaded, totalWords,perc,'%', pauseBook?'p':' ', hasBookmark?'b':' ', speed);    
@@ -444,7 +454,7 @@ void drawBookResumeMenu(void)
 
 	uint8_t i, h;
 	u8g2_uint_t w, d;
-	resumeBookBtnsUpd();
+	
     
     u8g2.clearBuffer();         
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
@@ -472,30 +482,34 @@ void drawBookMenu(void)
 {  
 	uint8_t i, h;
 	u8g2_uint_t w, d;
-	bookBtnsUpd2();
-    
+	
+    //Serial.println("drawBookMenu");
     u8g2.clearBuffer();         
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 	u8g2.setFont(u8g2_font_unifont_t_symbols);
-      
-	u8g2.drawGlyph(2, bookMenuSelected*8+16, 0x25b7); 
+       int mul=7;
+	u8g2.drawGlyph(2, bookMenuSelected*mul+16, 0x25b7); 
 	//u8g2.setFont(u8g2_font_5x7_mr); 
 	u8g2.setFont(u8g2_font_6x13_t_cyrillic); 
 	//delay(1000);  
 	u8g2.setFont(u8g2_font_5x8_t_cyrillic);  
-   
+
+  
 	u8g2.drawBox(0, i*h+1, w, h);    
 	u8g2.drawUTF8(12, 0+13, BACK_STRING); 
-	u8g2.drawUTF8(12, 8+13, IN_MENU_STRING);  
-	u8g2.drawUTF8(12, 8*2+13, GOTO_WORD_STRING);  
-	u8g2.drawUTF8(12, 8*3+13, SAVE_BOOKMARK_STRING); 
-	u8g2.drawUTF8(12, 8*4+13, LOAD_BOOKMARK_STRING);  
+	u8g2.drawUTF8(12, mul+13, IN_MENU_STRING);  
+	u8g2.drawUTF8(12, mul*2+13, GOTO_WORD_STRING);  
+	u8g2.drawUTF8(12, mul*3+13, SAVE_BOOKMARK_STRING); 
+	u8g2.drawUTF8(12, mul*4+13, LOAD_BOOKMARK_STRING);  
     char buf[100];
     sprintf(buf,"%s: %s",READ_MODE_STRING,textReadMode==0?SCROLL_STRING:((textReadMode==1)?ONE_WORD_STRING:MANUAL_SCROLL_STRING));
      
-    u8g2.drawUTF8(12, 8*5+13, buf);  
+    u8g2.drawUTF8(12, mul*5+13, buf);  
 	sprintf(buf,"%s: %s",FONT_SIZE_STRING, textSize==0?SMALL_FONT_SIZE_STRING:((textSize==1)?BIG_FONT_SIZE_STRING:WIDE_FONT_SIZE_STRING));
-    u8g2.drawUTF8(12, 8*6+13, buf);  
+    u8g2.drawUTF8(12, mul*6+13, buf);  
+    sprintf(buf,"%s: %s",CONTRAST_STRING, contrast==0?CONTRAST_LOW_STRING:CONTRAST_HIGH_STRING);
+    u8g2.drawUTF8(12, mul*7+13, buf);  
+    
 	u8g2.sendBuffer();         
 }
 
@@ -506,7 +520,7 @@ void drawMenu(void)
   uint8_t i, h;
   u8g2_uint_t w, d;
   u8g2.setDisplayRotation(U8G2_R2);
-  u8g2 . setContrast ( 0) ;
+  u8g2 . setContrast ( contrast) ;
     u8g2.clearBuffer();          
     u8g2.setFont(u8g2_font_ncenB08_tr);
     
@@ -751,6 +765,7 @@ void setupBook()
 	line6="";line5="";line4="";line3="";line2="";
 	hasBookmark=getBookmark()>=0;
  if(hasBookmark){
+  Serial.println("fsmState 11 ");
   fsmState=11;
  }
 }
@@ -926,23 +941,32 @@ void loop()
 	}else
 		if(fsmState==2)
 		{
+    bookBtnsUpd2();
+    if(fsmState==2 && menu_redraw_required!=0){
 			drawBookMenu();
+			menu_redraw_required=0;
+			}
 		} else if(fsmState==21)
 		{
 			drawGoto();
 		}else if(fsmState==11)//yes/no resume book
    {     
-    //if(menu_redraw_required!=0)
-     // {
+    resumeBookBtnsUpd();
+    if(fsmState==11 && menu_redraw_required!=0)
+      {
         drawBookResumeMenu();
-     // } 
+          menu_redraw_required=0;
+      } 
     
     
     }else if(fsmState==1)
 		{       
-			if(menu_redraw_required!=0)
+      
+  bookBtnsUpd();
+			if(fsmState==1 && menu_redraw_required!=0)
 			{
-				drawBook();
+				drawBook(); 
+				menu_redraw_required=0;
 			} 
     
 			int speedSum=speed;
