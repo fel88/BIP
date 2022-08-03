@@ -1,5 +1,5 @@
   /*
- Book In Pocket 
+ Book In Pocket OLED
 */
 #include "strings_rus.h"
  
