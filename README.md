@@ -8,7 +8,7 @@ ESP32 based book reader
 
 ## Parts:<br/>
 - DOIT Esp32 DevKit v1 (ESP-WROOM-32 DevKit v1)
-- OLED Monochrome SPI 1.54" (128x64)
+- OLED Monochrome SPI 1.54" (128x64) or TFT 1.44"(128x128) / 1.8"(128x160)
 - SD card module 3.3V 
 - Analog Keyboard module (5 keys)
 
