@@ -12,10 +12,10 @@ TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 void setMyFont(){
   tft.setFreeFont(&exportFont);
 }
-TFT_eSprite graph1 = TFT_eSprite(&tft); // Sprite object graph1
+
 float p = 3.1415926;
 int key=34;
-TFT_eSprite stext1 = TFT_eSprite(&tft); // Sprite object stext1
+TFT_eSprite stext1= TFT_eSprite(&tft); // Sprite object stext1 ;
 uint8_t menu_redraw_required = 0;
 #include "SdFat.h"
 #include <Arduino.h>
@@ -119,24 +119,22 @@ setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
  //digitalWrite(tftCS, LOW);
  // // Use this initializer if you're using a 1.8" TFT
   tft.init();   // initialize a ST7735S chip
-//tft.setRotation(3);
+//tft.setRotation(1);
   Serial.println("Initialized");
 
   uint16_t time = millis();
   tft.fillScreen(TFT_BLACK);
   time = millis() - time;
   
-  // Create a sprite for the scrolling numbers
-  graph1.setColorDepth(4);
-  graph1.createSprite(128, 32);
+  //stext1= &TFT_eSprite(&tft); // Sprite object stext1
   
-  graph1.fillSprite(TFT_BLACK); // Fill sprite with blue
-  
-  stext1.setColorDepth(4);
-  stext1.createSprite(128, 128);
-  stext1.fillSprite(TFT_BLUE); // Fill sprite with blue
+  //stext1.setColorDepth(4);
+   stext1.setTextWrap(false);
+     stext1.setFreeFont(&exportFont); 
+  stext1.createSprite(128,128);
+  //stext1.fillSprite(TFT_BLUE); // Fill sprite with blue
   stext1.fillSprite(TFT_BLACK); // Fill sprite with blue
-  stext1.setScrollRect(0, 0, 128, 128, TFT_BLACK);     // here we set scroll gap fill color to blue
+  stext1.setScrollRect(0, 0, 128,128, TFT_BLACK);     // here we set scroll gap fill color to blue
   stext1.setTextColor(TFT_WHITE); // White text, no background
   stext1.setTextDatum(BC_DATUM);  // Bottom right coordinate datum
 //digitalWrite(tftCS, HIGH);
@@ -342,7 +340,8 @@ void loadBookmark()
   Serial.println("arduino_bookmarks.txt not found");
   
 }
-
+bool line1Changed=false;
+bool spriteClearRequired=false;
 void setupBook()
 {
  
@@ -405,6 +404,7 @@ void setupBook()
   }
   
   line1="";
+  line1Changed=true;
   file.close();
     Serial.print("total words : ");
     Serial.println(totalWords);
@@ -424,10 +424,11 @@ void setupBook()
   //  if(exit)break;
   int pos=file.curPosition();
   }
-  
+  line1Changed=true;
   Serial.print("first word : ");
   Serial.println(line1);
   line6="";line5="";line4="";line3="";line2="";
+  spriteClearRequired=true;
   hasBookmark=getBookmark()>=0;
  if(hasBookmark){
   Serial.println("fsmState 11 ");
@@ -831,7 +832,9 @@ void drawBook()
    setMyFont();
     //Serial.println("#drawBook");
   //u8g2.clearBuffer();       
+  if(pauseBook)
      tft.fillScreen(TFT_BLACK);
+     
       tft.setTextColor(TFT_WHITE);
   char buffer[80];
   char buffer2[80];
@@ -911,9 +914,33 @@ void drawBook()
   tft.print(line2.c_str());*/
   tft.setTextDatum(TC_DATUM);
  
-
+stext1.setTextDatum(TC_DATUM);
+   stext1.pushSprite(0, 0);
   
-            
+    
+
+    
+       if(line1.length()>0 && line1Changed){
+        if(spriteClearRequired){
+          stext1.fillSprite(TFT_BLACK);
+          spriteClearRequired=false;
+        }
+       int padding = stext1.textWidth(line1.c_str(), 1); // get the width of the text in pixels
+       padding/=2;
+       line1Changed=false;
+  //stext1.setTextColor(TFT_GREEN, TFT_BLUE);
+  //stext1.setTextPadding(padding);  
+     //stext1.setTextPadding(5);
+      stext1.setCursor(64-padding,25+yShift2+height*5);
+      
+  //stext1.println(data);
+  stext1.scroll(0,-stext1.fontHeight(1));
+    //stext1.drawString(line1.c_str(), 64, 128, 1);
+    stext1.print(line1.c_str());
+       }
+       
+    
+            /*
     if(line6.length()>0){
       
         int padding = tft.textWidth(line6.c_str(), 1);
@@ -964,7 +991,7 @@ tft.setCursor(64-cw2,25+height*2+yShift2);
     tft.setCursor(64-cw,25+height*3+yShift2);
    
   tft.print(line1.c_str());
-   }
+   }*/
      }
 
       //if(textReadMode==1 || pauseBook){
@@ -1267,6 +1294,7 @@ void loop() {
     while(1)
     {
                 line1="";
+                line1Changed=true;
                 int cntr=0;
                 while ((n = file.read(buf, sizeof(buf)))) 
         {
@@ -1294,6 +1322,7 @@ void loop() {
             wordReaded+=wordsSkip;
             if(wordsSkip>1){
               line6="";line5="";line4="";line3="";line2="";
+              spriteClearRequired=true;
             }
             wordsSkip=1;                   
             break;
