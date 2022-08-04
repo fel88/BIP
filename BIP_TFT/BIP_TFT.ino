@@ -6,11 +6,11 @@
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <SPI.h>
 
-#include "font7_12px.h";
+#include "font7_12px_fixed.h";
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
 void setMyFont(){
-  tft.setFreeFont(&font7_12px);
+  tft.setFreeFont(&exportFont);
 }
 TFT_eSprite graph1 = TFT_eSprite(&tft); // Sprite object graph1
 float p = 3.1415926;
@@ -818,7 +818,7 @@ void drawGoto()
 void drawBook()
 {
   tft.setTextSize(0);
-   tft.setFreeFont(&font7_12px);
+   setMyFont();
     //Serial.println("#drawBook");
   //u8g2.clearBuffer();       
      tft.fillScreen(TFT_BLACK);
