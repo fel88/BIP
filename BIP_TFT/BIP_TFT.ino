@@ -80,12 +80,22 @@ FsFile fileB;
 
 #define tftCS 5
 
+#include <WiFi.h>
 void setup(void) {
    pinMode(tftCS, OUTPUT);
       pinMode(SD_CS_PIN, OUTPUT);
   digitalWrite(tftCS, HIGH);
    digitalWrite(SD_CS_PIN, HIGH);
   Serial.begin(115200);
+setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
+  Serial.println();
+  Serial.print("CPU Frequency is: ");
+  Serial.print(getCpuFrequencyMhz()); //Get CPU clock
+  Serial.print(" Mhz");
+  Serial.println();
+  WiFi.mode(WIFI_OFF);
+  btStop();
+  
   pinMode(key,INPUT);
     
   // Wait for USB Serial
@@ -824,8 +834,10 @@ void drawBook()
      tft.fillScreen(TFT_BLACK);
       tft.setTextColor(TFT_WHITE);
   char buffer[80];
+  char buffer2[80];
   int perc=(int)((wordReaded/(float)totalWords)*100);
-  sprintf(buffer, "%6d/%ld (%d%c) %c%c%d", wordReaded, totalWords,perc,'%', pauseBook?'p':' ', hasBookmark?'b':' ', speed);    
+  sprintf(buffer, "%6d/%ld (%d%c)", wordReaded, totalWords,perc,'%');  
+   sprintf(buffer2, "bookmark[%c] s%d",   hasBookmark?'x':' ', speed);   
   first=false;  
   //u8g.setFont(rus8x13); 
   int fw=9;
@@ -960,7 +972,7 @@ tft.setCursor(64-cw2,25+height*2+yShift2);
   {
      
       tft.setTextFont(0);
-     tft.fillRect(0, 0, 160, 25, TFT_BLACK);
+     tft.fillRect(0, 0, 160, 30, TFT_BLACK);
     /*u8g2.setDrawColor(0);
      
     u8g2.drawBox(0, 0, 128, 25);
@@ -972,12 +984,18 @@ tft.setCursor(64-cw2,25+height*2+yShift2);
      
     u8g2.drawStr( 5, 12, buffer);
     u8g2.drawStr( 5, 20, bookName.c_str());*/
-    tft.drawLine(0, 25, 160, 25, TFT_WHITE);
-    
-      tft.setCursor(5,2);
+    tft.drawLine(0, 30, 160, 30, TFT_WHITE);
+      tft.setTextColor(TFT_GREEN);
+      tft.setCursor(3,2);
   tft.print(buffer);
-  tft.setCursor(5,10);
+  
+    tft.setCursor(3,10);
+  tft.print(buffer2);
+  
+  tft.setTextColor(TFT_ORANGE);
+  tft.setCursor(3,18);
   tft.print(bookName.c_str());
+  
   }
   //u8g2.sendBuffer();        
 }
@@ -988,14 +1006,19 @@ void drawBookResumeMenu(void)
   uint8_t i, h;
   uint8_t w, d;
   
-    
+     tft.fillScreen(TFT_BLACK);
+     setMyFont();
     //u8g2.clearBuffer();         
+    
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
   //u8g2.setFont(u8g2_font_unifont_t_symbols);
-    int yshift=26;
+    int yshift=30;
+     tft.setTextColor(TFT_WHITE);  
   //u8g2.drawGlyph(2,yshift+ resumeBookMenuSelected*8+16, 0x25b7);  
   //u8g2.setFont(u8g2_font_5x7_mr); 
   //u8g2.setFont(u8g2_font_6x13_t_cyrillic); 
+   tft.setCursor(2,yshift+ resumeBookMenuSelected*8+16);    
+  tft.print(">");
   
   //u8g2.setFont(u8g2_font_5x8_t_cyrillic);  
     //h = u8g2.getFontAscent()-u8g2.getFontDescent();
@@ -1004,10 +1027,28 @@ void drawBookResumeMenu(void)
   
   //u8g2.drawUTF8(12, yshift+0+13, RESUME_BOOK_YES); 
   //u8g2.drawUTF8(12,yshift+ 8+13, RESUME_BOOK_NO);  
-      
+
+
+  if(resumeBookMenuSelected==0){
+    tft.setTextColor(TFT_GREEN);  
+  }
+      tft.setCursor(12, yshift+0+13);    
+  tft.print(RESUME_BOOK_YES);
+  tft.setTextColor(TFT_WHITE);  
+  if(resumeBookMenuSelected==1){
+    tft.setTextColor(TFT_GREEN);  
+  }
+  tft.setCursor(12, yshift+26);    
+  tft.print(RESUME_BOOK_NO);
+  
   //u8g2.drawUTF8(12,13, RESUME_BOOK_TITLE);  
     //u8g2.drawUTF8(12,20, RESUME_BOOK_TITLE_2);  
-    
+     tft.setTextColor(TFT_WHITE);  
+
+   tft.setCursor(12, 13);    
+  tft.print(RESUME_BOOK_TITLE);
+  tft.setCursor(12, 26);    
+  tft.print(RESUME_BOOK_TITLE_2);
   //u8g2.sendBuffer();         
 }
 
@@ -1017,25 +1058,47 @@ void drawBookMenu(void)
   uint8_t i, h;
   uint8_t w, d;
   setMyFont();
+  tft.setTextColor(TFT_WHITE);  
     //Serial.println("drawBookMenu");
     //u8g2.clearBuffer();         
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
  // u8g2.setFont(u8g2_font_unifont_t_symbols);
-       int mul=7;
+       int mul=13;
  // u8g2.drawGlyph(2, bookMenuSelected*mul+16, 0x25b7); 
-  tft.setCursor(2,bookMenuSelected*mul+16);    
+  tft.setCursor(2,bookMenuSelected*mul+12);    
   tft.print(">");
   
-
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==0)    tft.setTextColor(TFT_GREEN);  
+  
    tft.setCursor(12, 0+13);    
   tft.print(BACK_STRING);
+
+ 
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==1)    tft.setTextColor(TFT_GREEN);  
+  
    tft.setCursor(12, mul+13);    
   tft.print(IN_MENU_STRING);
+
+   
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==2)    tft.setTextColor(TFT_GREEN);  
+  
    tft.setCursor(12, mul*2+13);    
   tft.print(GOTO_WORD_STRING);
+ 
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==3)    tft.setTextColor(TFT_GREEN);  
 
+  
     tft.setCursor(12, mul*3+13);    
   tft.print(SAVE_BOOKMARK_STRING);
+
+   
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==4)    tft.setTextColor(TFT_GREEN); 
+   
   tft.setCursor(12, mul*4+13);    
   tft.print(LOAD_BOOKMARK_STRING);
   
@@ -1043,15 +1106,21 @@ void drawBookMenu(void)
     char buf[100];
     sprintf(buf,"%s: %s",READ_MODE_STRING,textReadMode==0?SCROLL_STRING:((textReadMode==1)?ONE_WORD_STRING:MANUAL_SCROLL_STRING));
      
-  
+   
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==5)    tft.setTextColor(TFT_GREEN);  
    tft.setCursor(12, mul*5+13);    
   tft.print(buf);
   sprintf(buf,"%s: %s",FONT_SIZE_STRING, textSize==0?SMALL_FONT_SIZE_STRING:((textSize==1)?BIG_FONT_SIZE_STRING:WIDE_FONT_SIZE_STRING));
-
+ 
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==6)    tft.setTextColor(TFT_GREEN);  
    tft.setCursor(12, mul*6+13);    
   tft.print(buf);
     sprintf(buf,"%s: %s",CONTRAST_STRING, contrast==0?CONTRAST_LOW_STRING:CONTRAST_HIGH_STRING);
-  
+   
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==7)    tft.setTextColor(TFT_GREEN);  
     tft.setCursor(12, mul*7+13);    
   tft.print(buf);
  
