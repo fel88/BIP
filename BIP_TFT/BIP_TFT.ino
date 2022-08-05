@@ -15,6 +15,7 @@ void setMyFont(){
 
 float p = 3.1415926;
 int key=34;
+int bkl=32;
 TFT_eSprite stext1= TFT_eSprite(&tft); // Sprite object stext1 ;
 uint8_t menu_redraw_required = 0;
 #include "SdFat.h"
@@ -82,6 +83,7 @@ FsFile fileB;
 
 #include <WiFi.h>
 void setup(void) {
+ 
    pinMode(tftCS, OUTPUT);
       pinMode(SD_CS_PIN, OUTPUT);
   digitalWrite(tftCS, HIGH);
@@ -97,12 +99,16 @@ setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
   btStop();
   
   pinMode(key,INPUT);
-    
+  //pinMode(bkl,OUTPUT);
+     //digitalWrite(bkl, LOW);
+     ledcAttachPin(bkl,0);  
+     ledcSetup(0, 44100, 8); //44100
+     ledcWrite(0, 255);
   // Wait for USB Serial
   while (!Serial) {
     yield();
   }
-
+  
   /*Serial.println("Type any character to start");
   while (!Serial.available()) {
     yield();
@@ -344,8 +350,13 @@ bool line1Changed=false;
 bool spriteClearRequired=false;
 void setupBook()
 {
- 
-
+    setMyFont();
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_YELLOW);
+    int padding = tft.textWidth(LOADING_STRING, 1); // get the width of the text in pixels
+    padding/=2;
+    tft.setCursor(64-padding,64);
+    tft.print(LOADING_STRING);
  
   wordReaded=0;
   pauseBook=false;
@@ -389,6 +400,8 @@ void setupBook()
     menu_current=0;
   return;
   }
+  
+   
   
  bool exit=false;  
      char lastSym;
@@ -742,10 +755,13 @@ void bookBtnsUpd2()
                                         textSize++;
                                         textSize%=3;
                           }else if(bookMenuSelected==7){//contrast
-                            if(contrast==0){
-                                        contrast=255;}else
-                                        contrast=0;
+                            if(contrast==64){
+                                        contrast=128;}else if(contrast==128){
+                                           contrast=255;
+                                        }else
+                                        contrast=64;
                                         
+                                        ledcWrite(0, contrast);
                                        //  u8g2 . setContrast ( contrast) ;
                                          Serial.print("set contrast: ");
                                          Serial.print(contrast);
@@ -1144,7 +1160,8 @@ tft.setTextColor(TFT_WHITE);
   if(bookMenuSelected==6)    tft.setTextColor(TFT_GREEN);  
    tft.setCursor(12, mul*6+13);    
   tft.print(buf);
-    sprintf(buf,"%s: %s",CONTRAST_STRING, contrast==0?CONTRAST_LOW_STRING:CONTRAST_HIGH_STRING);
+    //sprintf(buf,"%s: %s",CONTRAST_STRING, contrast==0?CONTRAST_LOW_STRING:CONTRAST_HIGH_STRING);
+   sprintf(buf,"%s: %d",CONTRAST_STRING, contrast);
    
 tft.setTextColor(TFT_WHITE);  
   if(bookMenuSelected==7)    tft.setTextColor(TFT_GREEN);  

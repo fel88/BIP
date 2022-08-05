@@ -16,6 +16,6 @@
 #define RESUME_BOOK_NO "from start"
 #define RESUME_BOOK_TITLE "resume reading?"
 #define RESUME_BOOK_TITLE_2 ""
-#define CONTRAST_STRING "contrast"
+#define CONTRAST_STRING "brightness"
 #define CONTRAST_LOW_STRING "low"
 #define CONTRAST_HIGH_STRING "high"
