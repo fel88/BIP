@@ -6,7 +6,7 @@
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <SPI.h>
 
-#include "font7_12px_fixed.h";
+#include "font1.h";
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
 void setMyFont(){
