@@ -125,7 +125,7 @@ setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
  //digitalWrite(tftCS, LOW);
  // // Use this initializer if you're using a 1.8" TFT
   tft.init();   // initialize a ST7735S chip
-//tft.setRotation(1);
+tft.setRotation(1);
   Serial.println("Initialized");
 
   uint16_t time = millis();
@@ -137,10 +137,10 @@ setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
   //stext1.setColorDepth(4);
    stext1.setTextWrap(false);
      stext1.setFreeFont(&exportFont); 
-  stext1.createSprite(128,128);
+  stext1.createSprite(160,128);
   //stext1.fillSprite(TFT_BLUE); // Fill sprite with blue
   stext1.fillSprite(TFT_BLACK); // Fill sprite with blue
-  stext1.setScrollRect(0, 0, 128,128, TFT_BLACK);     // here we set scroll gap fill color to blue
+  stext1.setScrollRect(0, 0, 160,128, TFT_BLACK);     // here we set scroll gap fill color to blue
   stext1.setTextColor(TFT_WHITE); // White text, no background
   stext1.setTextDatum(BC_DATUM);  // Bottom right coordinate datum
 //digitalWrite(tftCS, HIGH);
@@ -947,7 +947,7 @@ stext1.setTextDatum(TC_DATUM);
   //stext1.setTextColor(TFT_GREEN, TFT_BLUE);
   //stext1.setTextPadding(padding);  
      //stext1.setTextPadding(5);
-      stext1.setCursor(64-padding,25+yShift2+height*5);
+      stext1.setCursor(tft.width()/2-padding,25+yShift2+height*5);
       
   //stext1.println(data);
   stext1.scroll(0,-stext1.fontHeight(1));
