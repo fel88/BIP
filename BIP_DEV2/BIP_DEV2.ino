@@ -39,15 +39,15 @@ void setMyFont1(){
     stext1.setFreeFont(&exportFont);   
   
 }
-
+int book_font_color=0;
 float p = 3.1415926;
 int key=34;
 
 
-int key1=15;
-int key2=2;
-int key3=21;
-int key4=13;
+int key1=13;
+int key2=34;
+int key3=35;
+int key4=21;
 
 
 int bkl=32;
@@ -770,13 +770,13 @@ void bookBtnsUpd2()
                          //if(key_id=="RIGHT")xx++;
                          if(pressed_button=="DOWN"){
                              bookMenuSelected++;
-                                      bookMenuSelected%=9;
+                                      bookMenuSelected%=10;
                                           
                              } 
                           if(pressed_button=="UP"){
                               bookMenuSelected--;
                                      if( bookMenuSelected<0){
-                                      bookMenuSelected=8;
+                                      bookMenuSelected=9;
                                      }
                             }
                           if(pressed_button=="ENTER"){
@@ -818,6 +818,9 @@ void bookBtnsUpd2()
                                          Serial.print(contrast);
                           }else if(bookMenuSelected==8){//smooth scroll
                             smoothScroll=!smoothScroll;
+                          }else if(bookMenuSelected==9){//font color 
+                            book_font_color++;
+                            book_font_color%=2;
                           }
                       }
               }
@@ -904,7 +907,9 @@ void drawBook()
   if(pauseBook)
      tft.fillScreen(TFT_BLACK);
      
+     stext1.setTextColor( book_font_color==1?TFT_BLUE:TFT_WHITE);
       tft.setTextColor(TFT_WHITE);
+      
   char buffer[80];
   char buffer2[80];
   int perc=(int)((wordReaded/(float)totalWords)*100);
@@ -1105,8 +1110,9 @@ void drawBookMenu(void)
     //u8g2.clearBuffer();         
     //u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
  // u8g2.setFont(u8g2_font_unifont_t_symbols);
-       int mul=13;
+       int mul=11;
        mul=tft.fontHeight(1);
+       mul-=3;
  // u8g2.drawGlyph(2, bookMenuSelected*mul+16, 0x25b7); 
   tft.setCursor(2,bookMenuSelected*mul+12);    
   tft.print(">");
@@ -1167,7 +1173,21 @@ tft.setTextColor(TFT_WHITE);
   if(bookMenuSelected==7)    tft.setTextColor(TFT_GREEN);  
     tft.setCursor(12, mul*7+13);    
   tft.print(buf);
- 
+  
+ sprintf(buf,"%s: %s",READ_MODE_2_STRING, smoothScroll?"on":"off");
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==8)    tft.setTextColor(TFT_GREEN);  
+    tft.setCursor(12, mul*8+13);    
+  tft.print(buf);
+
+  
+ sprintf(buf,"%s: %s",FONT_COLOR_STRING, book_font_color==1?"blue":"white");
+tft.setTextColor(TFT_WHITE);  
+  if(bookMenuSelected==9)    tft.setTextColor(TFT_GREEN);  
+    tft.setCursor(12, mul*9+13);    
+  tft.print(buf);
+ //#define READ_MODE_2_STRING "режим"
+//#define FONT_COLOR_STRING "цвет"
 }
 
 void drawMenu(void) 
