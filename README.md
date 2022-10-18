@@ -1,8 +1,8 @@
 # Book In Pocket
 
 ESP32 based book reader + mp3 player
-<p align="center">
- <img width="50%" align="center" src="Images/dev1.jpg"/>
+<p align="left">
+ <img width="40%" align="center" src="Images/dev1.jpg"/>
  </p>
 
 ## Parts:<br/>
@@ -16,24 +16,24 @@ ESP32 based book reader + mp3 player
 
 
 ## Breadboard prototype
-<p align="center">
-  <img width="50%" align="center" src="Images/foto1.jpg"/>
+<p align="left">
+  <img width="40%" align="center" src="Images/foto1.jpg"/>
 </p>
 
 
 ## Dev board #1
-<p align="center">
- <img width="50%" align="center" src="Images/dev1.jpg"/>
+<p align="left">
+ <img width="40%" align="center" src="Images/dev1.jpg"/>
  </p>
 
  ## Dev board #2
-<p align="center">
- <img width="40%" align="center" src="Images/dev2.jpg"/> <img width="40%" align="center" src="Images/dev2-back.jpg"/>
+<p align="left">
+ <img width="40%" align="center" src="Images/dev2.jpg"/> <img width="40%" align="center" src="Images/dev2-back-90.jpg"/>
  </p>
 
 <!--
 ## Case model:
-<p align="center">
+<p align="left">
   <img width="50%" align="center" src="Images/1.png"/>
 </p>
 -->
